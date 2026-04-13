@@ -1,0 +1,217 @@
+/* 
+ * Premium Modern Software UI for LMW Client SDK 
+ * Focus: Sophisticated, Modern, High-End SaaS look.
+ */
+
+:root {
+    --lmw-primary: #0f172a;       /* Slate 900 */
+    --lmw-accent: #6366f1;        /* Indigo 500 */
+    --lmw-accent-hover: #4f46e5;
+    --lmw-success: #10b981;
+    --lmw-error: #f43f5e;
+    --lmw-bg: #f8fafc;
+    --lmw-card-bg: #ffffff;
+    --lmw-text-main: #1e293b;
+    --lmw-text-muted: #64748b;
+    --lmw-border: #e2e8f0;
+    --lmw-radius: 12px;
+    --lmw-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);
+    --lmw-shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+#lmw-admin-page {
+    background-color: var(--lmw-bg);
+    color: var(--lmw-text-main);
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    padding: 60px 20px;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+}
+
+.lmw-container {
+    max-width: 640px;
+    margin: 0 auto;
+}
+
+/* Header Section */
+.lmw-header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.lmw-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    color: var(--lmw-primary);
+    margin-bottom: 8px;
+}
+
+.lmw-subtitle {
+    font-size: 1rem;
+    color: var(--lmw-text-muted);
+}
+
+/* Card Styling */
+.lmw-card {
+    background: var(--lmw-card-bg);
+    border-radius: var(--lmw-radius);
+    border: 1px solid var(--lmw-border);
+    padding: 32px;
+    margin-bottom: 24px;
+    box-shadow: var(--lmw-shadow);
+}
+
+/* Stats Layout */
+.lmw-stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.lmw-stat-card {
+    background: var(--lmw-bg);
+    border-radius: 10px;
+    padding: 20px;
+    border: 1px solid var(--lmw-border);
+}
+
+.lmw-stat-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--lmw-text-muted);
+    margin-bottom: 12px;
+    display: block;
+}
+
+.lmw-stat-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--lmw-primary);
+}
+
+/* Badge System */
+.lmw-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 10px;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.lmw-badge-active { background: #dcfce7; color: #166534; }
+.lmw-badge-inactive { background: #fef3c7; color: #92400e; }
+.lmw-badge-expired { background: #fee2e2; color: #991b1b; }
+
+/* Form Controls */
+.lmw-form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.lmw-input-wrapper {
+    position: relative;
+    margin-bottom: 24px;
+}
+
+.lmw-input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--lmw-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.2s;
+    background: #fff;
+    outline: none;
+    box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.05);
+}
+
+.lmw-input:focus {
+    border-color: var(--lmw-accent);
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1), inset 0 2px 4px 0 rgba(0,0,0,0.05);
+}
+
+.lmw-input:read-only {
+    background: var(--lmw-bg);
+    cursor: default;
+}
+
+/* Buttons */
+.lmw-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    border: 1px solid transparent;
+}
+
+.lmw-btn-primary {
+    background: var(--lmw-accent);
+    color: #fff;
+}
+
+.lmw-btn-primary:hover {
+    background: var(--lmw-accent-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--lmw-shadow-lg);
+}
+
+.lmw-btn-secondary {
+    background: #fff;
+    border-color: var(--lmw-border);
+    color: var(--lmw-primary);
+}
+
+.lmw-btn-secondary:hover {
+    background: var(--lmw-bg);
+    border-color: var(--lmw-text-muted);
+}
+
+.lmw-btn-danger {
+    color: var(--lmw-error);
+    background: transparent;
+    font-weight: 500;
+}
+
+.lmw-btn-danger:hover {
+    background: #fff1f2;
+}
+
+/* Progress bar */
+.lmw-progress {
+    height: 6px;
+    background: var(--lmw-border);
+    border-radius: 99px;
+    overflow: hidden;
+    margin-top: 12px;
+}
+
+.lmw-progress-bar {
+    height: 100%;
+    background: var(--lmw-accent);
+}
+
+/* Alerts */
+.lmw-alert {
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.lmw-alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+.lmw-alert-error { background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; }
