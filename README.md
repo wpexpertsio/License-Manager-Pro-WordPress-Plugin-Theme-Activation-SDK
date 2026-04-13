@@ -95,33 +95,58 @@ Gain comprehensive visibility into your entire install base. Segment users by pr
 
 ## 📦 3-Minute Integration Guide
 
-Unlock elite licensing by dropping this folder into your project and initializing the client:
+Follow these steps to add commercial licensing to your WordPress product in minutes.
+
+### Step 1: Upload the SDK
+Copy the `lmw-client-sdk` folder into your plugin or theme's vendor directory. Your file structure should look like this:
+```text
+your-plugin/
+├── vendor/
+│   └── lmw-client-sdk/
+│       ├── lmw-sdk.php (Entry File)
+│       ├── src/ (Core Logic)
+│       └── images/ (Assets)
+├── includes/
+└── your-plugin.php
+```
+
+### Step 2: Initialize the Client
+Add the following boilerplate to your main plugin file (e.g., `your-plugin.php`) or your theme's `functions.php`.
 
 ```php
 if ( ! function_exists( 'my_plugin_lmw' ) ) {
+    /**
+     * Initialize and retrieve the License Manager SDK instance.
+     */
     function my_plugin_lmw() {
         global $my_plugin_lmw; // Use global variable to store the SDK instance
+        
         if ( ! isset( $my_plugin_lmw ) ) {
-            // Load the SDK entry file
-            require_once plugin_dir_path( __FILE__ ) . 'vendor/lmw-client-sdk/lmw-sdk.php';
+            // 1. Load the SDK entry file
+            $sdk_path = plugin_dir_path( __FILE__ ) . 'vendor/lmw-client-sdk/lmw-sdk.php';
             
-            // Initialize the SDK with your configuration
-            $my_plugin_lmw = lmw_sdk_init( array(
-                'public_key'             => 'lm_live_xxxxxxxx',               // Your Application Public Key (from Store backend)
-                'application_id'         => 1,                                // Your Application ID (from Store backend)
-                'rest_api_url'           => 'https://licensemanager.at',      // Your Store base URL where License Manager Pro is installed
-                'slug'                   => 'your-product-slug',              // Unique slug used for DB storage configuration
-                'plugin_name'            => 'My Premium Product',             // Product name displayed on the SDK UI
-                'block_after_expiration' => true,                             // If true, premium features will lock upon license expiry
-                'menu'                   => array(
-                    'parent_slug' => 'your-settings-area',                   // The parent menu slug where the license page will appear
-                    'page_title'  => 'Activate Pro License',                 // Title for the sub-menu item
-                ),
-            ) );
+            if ( file_exists( $sdk_path ) ) {
+                require_once $sdk_path;
+                
+                // 2. Initialize the SDK with your configuration
+                $my_plugin_lmw = lmw_sdk_init( array(
+                    'public_key'             => 'lm_live_xxxxxxxx',               // Your Application Public Key (from Store backend)
+                    'application_id'         => 1,                                // Your Application ID (from Store backend)
+                    'rest_api_url'           => 'https://licensemanager.at',      // Your Store base URL where License Manager Pro is installed
+                    'slug'                   => 'your-product-slug',              // Unique slug used for DB storage configuration
+                    'plugin_name'            => 'My Premium Product',             // Product name displayed on the SDK UI
+                    'block_after_expiration' => true,                             // If true, premium features will lock upon license expiry
+                    'menu'                   => array(
+                        'parent_slug' => 'your-settings-area',                   // The parent menu slug where the license page will appear
+                        'page_title'  => 'Activate Pro License',                 // Title for the sub-menu item
+                    ),
+                ) );
+            }
         }
-        return $my_plugin_lmw; // Return the SDK instance
+        return $my_plugin_lmw; // Return the SDK instance for further use
     }
-    // Initialize immediately to register core hooks and menus
+    
+    // Initialize immediately to register core hooks, menus, and background updates
     my_plugin_lmw();
 }
 ```
@@ -145,6 +170,7 @@ Stop paying commissions. Own your infrastructure. Scale your sales. Start today 
 </p>
 
 ---
+
 <p align="right">
   <i>The Gold Standard for Premium WordPress Plugin & Theme Development.</i>
 </p>
