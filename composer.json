@@ -1,0 +1,39 @@
+{
+    "name": "licensemanager/license-manager-pro-wordpress-plugin-theme-activation-sdk",
+    "description": "The ultimate professional PHP SDK for WordPress plugin and theme activation. Integrated with License Manager for WooCommerce Pro.",
+    "type": "library",
+    "license": "GPL-2.0-or-later",
+    "version": "1.0.0",
+    "authors": [
+        {
+            "name": "License Manager Team",
+            "email": "support@licensemanager.at",
+            "homepage": "https://licensemanager.at"
+        }
+    ],
+    "require": {
+        "php": ">=7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "LmwClientSDK\\": "src/"
+        },
+        "files": [
+            "lmw-sdk.php"
+        ]
+    },
+    "keywords": [
+        "wordpress",
+        "licensing",
+        "license-manager",
+        "plugin-activation",
+        "theme-activation",
+        "woocommerce",
+        "sdk"
+    ],
+    "homepage": "https://licensemanager.at",
+    "support": {
+        "issues": "https://licensemanager.at/support/",
+        "source": "https://github.com/licensemanager/license-manager-pro-sdk"
+    }
+}
