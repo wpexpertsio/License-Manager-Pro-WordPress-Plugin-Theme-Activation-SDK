@@ -61,10 +61,20 @@ class Storage {
     /** @return bool */
     public function isActive() {
         $status = $this->getStatus();
+
+        if ( $status !== 'active' && $status !== 'delivered' ) {
+            return false;
+        }
+
         $expires = $this->getExpiresAt();
-        
-        // Active status or 0000-00-00 date counts as active.
-        return ( $status === 'active' || $expires === '0000-00-00 00:00:00' || empty( $expires ) ) && $status !== 'inactive';
+
+        // Active status + (no expiry or lifetime date) = Active
+        if ( empty( $expires ) || $expires === '0000-00-00 00:00:00' ) {
+            return true;
+        }
+
+        // Active status + expiry date = Check if date is in the future
+        return strtotime( $expires ) > time();
     }
 
     /** @return string|null */

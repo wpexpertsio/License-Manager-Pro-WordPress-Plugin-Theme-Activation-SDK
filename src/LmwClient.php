@@ -355,17 +355,24 @@ class LmwClient {
         // Update local cache from server response.
         if ( isset( $data->is_expired ) && $data->is_expired ) {
             $this->storage->setStatus( 'inactive' );
-            $data->valid = false; // Force valid to false if expired
-            $data->status = 'inactive';
-        } elseif ( isset( $data->valid ) && $data->valid ) {
-            $this->storage->setStatus( 'active' );
-            // If it's valid and no expires_at is sent, it's a lifetime license.
-            // Clear the old date to prevent "Expired" messages.
+        } elseif ( isset( $data->status ) && ! empty( $data->status ) ) {
+            // Trust the explicit status from the server if provided.
+            $this->storage->setStatus( $data->status );
+        } elseif ( isset( $data->is_activated_here ) ) {
+            $this->storage->setStatus( $data->is_activated_here ? 'active' : 'inactive' );
+        } elseif ( isset( $data->is_activated ) ) {
+            $this->storage->setStatus( $data->is_activated ? 'active' : 'inactive' );
+        } elseif ( isset( $data->valid ) ) {
+            $this->storage->setStatus( $data->valid ? 'active' : 'inactive' );
+        } elseif ( isset( $data->is_active ) ) {
+            $this->storage->setStatus( $data->is_active ? 'active' : 'inactive' );
+        }
+
+        // If it's active and no expires_at is sent, it's a lifetime license.
+        if ( $this->storage->isActive() ) {
             if ( ! isset( $data->expires_at ) || empty( $data->expires_at ) ) {
                 $this->storage->setExpiresAt( null );
             }
-        } elseif ( isset( $data->valid ) ) {
-            $this->storage->setStatus( 'inactive' );
         }
 
         if ( isset( $data->expires_at ) && ! empty( $data->expires_at ) ) {
@@ -458,8 +465,8 @@ class LmwClient {
         $status = $this->getLicenseStatus();
         $expires = $this->storage->getExpiresAt();
 
-        // If license is active or lifetime (0000-00-00), always allow.
-        if ( $status === 'active' || $expires === '0000-00-00 00:00:00' || empty( $expires ) ) {
+        // If license is explicitly active or delivered, always allow.
+        if ( $status === 'active' || $status === 'delivered' ) {
             return true;
         }
 

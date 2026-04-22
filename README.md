@@ -170,6 +170,7 @@ Stop paying commissions. Own your infrastructure. Scale your sales. Start today 
 </p>
 
 ---
+**Keywords**: WordPress Plugin Activation, AppSumo Licensing SDK, WooCommerce Plugin Protector, Plugin Sync Server, Commercial License Manager.
 
 <p align="right">
   <i>The Gold Standard for Premium WordPress Plugin & Theme Development.</i>

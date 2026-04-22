@@ -179,6 +179,13 @@ class AdminPage {
 
         try {
             $this->client->validate();
+            
+            // Check if the sync actually resulted in an active license.
+            if ( ! $this->client->isActiveLicense() ) {
+                $status = $this->client->getLicenseStatus();
+                $this->redirect( 'error', sprintf( 'License sync completed, but the license is currently "%s". Please check your license status on the store.', $status ) );
+            }
+
             $this->redirect( 'synced', 'License synced successfully!' );
         } catch ( LmwException $e ) {
             $msg = $e->getApiMessage() ?: $e->getMessage();

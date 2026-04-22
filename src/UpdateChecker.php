@@ -28,8 +28,7 @@ class UpdateChecker {
         error_log( '[LMW SDK] Initializing UpdateChecker...' );
 
         $this->client          = $client;
-        $plugin_file_raw       = $client->getConfig( 'plugin_file', '' );
-        $this->plugin_file     = ! empty( $plugin_file_raw ) ? plugin_basename( $plugin_file_raw ) : '';
+        $this->plugin_file     = plugin_basename( $client->getConfig( 'plugin_file', '' ) );
         $this->current_version = $client->getConfig( 'plugin_version', '0.0.0' );
         $this->package_url     = $client->getConfig( 'update_package_url', null );
         $this->transient_key   = 'lmw_update_' . sanitize_key( $client->getConfig( 'slug' ) );
@@ -56,16 +55,8 @@ class UpdateChecker {
 
         $update_info = $this->fetchUpdateInfo();
 
-        if ( ! $update_info ) {
-            error_log( '[LMW SDK] No update info found (fetch failed or null).' );
-            return $transient;
-        }
-
-        // Handle flexible naming: 'new_version' (old) or 'version' (new API)
-        $new_version = $update_info->new_version ?? $update_info->version ?? null;
-
-        if ( ! $new_version ) {
-            error_log( '[LMW SDK] Update info found but version is missing. Data: ' . print_r($update_info, true) );
+        if ( ! $update_info || ! isset( $update_info->new_version ) ) {
+            error_log( '[LMW SDK] No update info found or valid.' );
             return $transient;
         }
 
@@ -166,39 +157,20 @@ class UpdateChecker {
      * @return object|null
      */
     private function fetchUpdateInfo() {
-        // Allow forcing a refresh via URL parameter
-        if ( isset( $_GET['lmw_force_check'] ) ) {
-            error_log( '[LMW SDK] Force refresh requested via URL. Clearing transient.' );
-            delete_transient( $this->transient_key );
-        }
-
         $cached = get_transient( $this->transient_key );
-        
-        // If we have cached info AND it actually has a version, use it.
-        // Otherwise, if it's just a "license inactive" placeholder, we force a fresh check.
-        if ( $cached !== false && isset( $cached->new_version ) ) {
-            error_log( '[LMW SDK] Using valid cached update info for ' . $this->plugin_file );
-            return $cached;
+        if ( $cached !== false ) {
+            error_log( '[LMW SDK] Using cached update info for ' . $this->plugin_file );
+            return $cached ?: null; // false = cached "no update"
         }
 
-        error_log( '[LMW SDK] No valid version in cache. Fetching fresh info from dedicated API...' );
+        error_log( '[LMW SDK] Fetching fresh update info from API...' );
 
         try {
-            $data = $this->client->checkUpdates();
+            $data = $this->client->validate();
             
-            if ( is_object( $data ) ) {
-                // Map modern API names to WordPress-expected names
-                if ( ! isset( $data->new_version ) && isset( $data->version ) ) {
-                    $data->new_version = $data->version;
-                }
-                if ( ! isset( $data->package ) && isset( $data->download_url ) ) {
-                    $data->package = $data->download_url;
-                }
-            }
-
             // Debug the raw response if needed
             if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-                error_log( '[LMW SDK] Dedicated API Response (Normalized): ' . print_r( $data, true ) );
+                error_log( '[LMW SDK] API Validation Response: ' . print_r( $data, true ) );
             }
 
             // Store the whole response (new_version etc.) for 12 h.

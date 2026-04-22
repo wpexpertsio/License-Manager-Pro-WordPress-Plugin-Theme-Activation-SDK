@@ -104,8 +104,12 @@
 }
 
 .lmw-badge-active { background: #dcfce7; color: #166534; }
-.lmw-badge-inactive { background: #fef3c7; color: #92400e; }
+.lmw-badge-delivered { background: #dcfce7; color: #166534; }
+.lmw-badge-inactive { background: #f1f5f9; color: #475569; }
 .lmw-badge-expired { background: #fee2e2; color: #991b1b; }
+.lmw-badge-invalid { background: #fee2e2; color: #991b1b; }
+.lmw-badge-unknown { background: #f1f5f9; color: #475569; }
+.lmw-badge-not-activated { background: #f1f5f9; color: #475569; }
 
 /* Form Controls */
 .lmw-form-label {
