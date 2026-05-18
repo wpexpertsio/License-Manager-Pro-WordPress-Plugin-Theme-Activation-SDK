@@ -99,6 +99,12 @@ class LmwClient {
         );
         $this->storage = new Storage( $this->config['slug'] );
 
+        // Pre-load essential helper classes that might be needed during
+        // sensitive lifecycle events (like plugin updates) where files might be
+        // missing from disk temporarily.
+        class_exists( 'LmwClientSDK\Helpers' );
+        class_exists( 'LmwClientSDK\LmwException' );
+
         $this->registerHooks();
 
         // Automatically register the admin license page if 'menu' config is provided.
@@ -343,8 +349,14 @@ class LmwClient {
                 'domain'      => $this->getDomain(),
             ), $this->getMetadata() ) );
         } catch ( LmwException $e ) {
-            // If it's a network/timeout error or regular API error, we keep the current local state.
-            // We only deactivate if the server EXPLICITLY returns a 'not found' or 'invalid' error in the data.
+            // If the server explicitly says the key is missing or invalid, deactivate locally.
+            $msg = $e->getApiMessage();
+            if ( $msg && ( stripos( $msg, 'License key not found' ) !== false || stripos( $msg, 'Invalid license' ) !== false ) ) {
+                $this->storage->setStatus( 'inactive' );
+                $this->storage->setExpiresAt( null );
+                $this->storage->touchLastCheck();
+            }
+
             throw $e;
         }
 
@@ -355,24 +367,17 @@ class LmwClient {
         // Update local cache from server response.
         if ( isset( $data->is_expired ) && $data->is_expired ) {
             $this->storage->setStatus( 'inactive' );
-        } elseif ( isset( $data->status ) && ! empty( $data->status ) ) {
-            // Trust the explicit status from the server if provided.
-            $this->storage->setStatus( $data->status );
-        } elseif ( isset( $data->is_activated_here ) ) {
-            $this->storage->setStatus( $data->is_activated_here ? 'active' : 'inactive' );
-        } elseif ( isset( $data->is_activated ) ) {
-            $this->storage->setStatus( $data->is_activated ? 'active' : 'inactive' );
-        } elseif ( isset( $data->valid ) ) {
-            $this->storage->setStatus( $data->valid ? 'active' : 'inactive' );
-        } elseif ( isset( $data->is_active ) ) {
-            $this->storage->setStatus( $data->is_active ? 'active' : 'inactive' );
-        }
-
-        // If it's active and no expires_at is sent, it's a lifetime license.
-        if ( $this->storage->isActive() ) {
+            $data->valid = false; // Force valid to false if expired
+            $data->status = 'inactive';
+        } elseif ( isset( $data->valid ) && $data->valid ) {
+            $this->storage->setStatus( 'active' );
+            // If it's valid and no expires_at is sent, it's a lifetime license.
+            // Clear the old date to prevent "Expired" messages.
             if ( ! isset( $data->expires_at ) || empty( $data->expires_at ) ) {
                 $this->storage->setExpiresAt( null );
             }
+        } elseif ( isset( $data->valid ) ) {
+            $this->storage->setStatus( 'inactive' );
         }
 
         if ( isset( $data->expires_at ) && ! empty( $data->expires_at ) ) {
@@ -465,8 +470,8 @@ class LmwClient {
         $status = $this->getLicenseStatus();
         $expires = $this->storage->getExpiresAt();
 
-        // If license is explicitly active or delivered, always allow.
-        if ( $status === 'active' || $status === 'delivered' ) {
+        // If license is active or lifetime (0000-00-00), always allow.
+        if ( $status === 'active' || $expires === '0000-00-00 00:00:00' || empty( $expires ) ) {
             return true;
         }
 

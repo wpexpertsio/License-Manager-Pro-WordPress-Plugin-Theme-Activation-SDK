@@ -179,13 +179,6 @@ class AdminPage {
 
         try {
             $this->client->validate();
-            
-            // Check if the sync actually resulted in an active license.
-            if ( ! $this->client->isActiveLicense() ) {
-                $status = $this->client->getLicenseStatus();
-                $this->redirect( 'error', sprintf( 'License sync completed, but the license is currently "%s". Please check your license status on the store.', $status ) );
-            }
-
             $this->redirect( 'synced', 'License synced successfully!' );
         } catch ( LmwException $e ) {
             $msg = $e->getApiMessage() ?: $e->getMessage();
@@ -267,7 +260,7 @@ class AdminPage {
                         <div style="display: flex; align-items: center; justify-content: space-between;">
                             <span class="lmw-stat-value"><?php echo esc_html( ucfirst( $status ) ); ?></span>
                             <span class="lmw-badge lmw-badge-<?php echo esc_attr( $status ); ?>">
-                                <?php echo esc_html( $is_active ? 'Active' : 'Missing' ); ?>
+                                <?php echo esc_html( $is_active ? 'Active' : 'Inactive' ); ?>
                             </span>
                         </div>
                         <?php if ( $is_active ) : ?>

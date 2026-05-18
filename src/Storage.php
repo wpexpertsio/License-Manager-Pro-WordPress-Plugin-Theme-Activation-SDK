@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Option keys:
  *   lmw_{slug}_license_key    — the raw license key
  *   lmw_{slug}_activation_id  — activation record ID from the store
- *   lmw_{slug}_status         — active | inactive | expired | invalid | unknown
+ *   lmw_{slug}_status         — active | inactive | expired | invalid
  *   lmw_{slug}_expires_at     — MySQL datetime or null (lifetime license)
  *   lmw_{slug}_last_check     — Unix timestamp of last validation
  *
@@ -43,9 +43,9 @@ class Storage {
         return ( $v !== null ) ? (int) $v : null;
     }
 
-    /** @return string  active|inactive|expired|invalid|unknown */
+    /** @return string  active|inactive|expired|invalid */
     public function getStatus() {
-        return get_option( $this->k( 'status' ), 'unknown' );
+        return get_option( $this->k( 'status' ), 'inactive' );
     }
 
     /** @return string|null */
@@ -61,19 +61,16 @@ class Storage {
     /** @return bool */
     public function isActive() {
         $status = $this->getStatus();
-
-        if ( $status !== 'active' && $status !== 'delivered' ) {
+        
+        if ( $status !== 'active' ) {
             return false;
         }
 
         $expires = $this->getExpiresAt();
-
-        // Active status + (no expiry or lifetime date) = Active
         if ( empty( $expires ) || $expires === '0000-00-00 00:00:00' ) {
             return true;
         }
 
-        // Active status + expiry date = Check if date is in the future
         return strtotime( $expires ) > time();
     }
 

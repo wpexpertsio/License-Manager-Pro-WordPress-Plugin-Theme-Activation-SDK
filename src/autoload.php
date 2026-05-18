@@ -21,7 +21,7 @@ $lmw_sdk_map = array(
 );
 
 spl_autoload_register( function ( $class ) use ( $lmw_sdk_map ) {
-    if ( isset( $lmw_sdk_map[ $class ] ) ) {
+    if ( isset( $lmw_sdk_map[ $class ] ) && file_exists( $lmw_sdk_map[ $class ] ) ) {
         require_once $lmw_sdk_map[ $class ];
     }
 } );
